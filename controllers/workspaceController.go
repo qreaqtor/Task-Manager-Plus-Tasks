@@ -10,12 +10,14 @@ import (
 )
 
 type WorkspaceController struct {
-	workSpaceService services.WorkspaceService
+	workSpaceService   services.WorkspaceService
+	deleteTasksHandler func(workspaceId primitive.ObjectID) error
 }
 
-func NewWorkSpaceController() WorkspaceController {
+func NewWorkSpaceController(tasksDeleteHandler func(workspaceId primitive.ObjectID) error) WorkspaceController {
 	return WorkspaceController{
-		workSpaceService: services.NewWorkspaceService(),
+		workSpaceService:   services.NewWorkspaceService(),
+		deleteTasksHandler: tasksDeleteHandler,
 	}
 }
 
@@ -47,6 +49,11 @@ func (wsc *WorkspaceController) getUserWorkspaces(ctx *gin.Context) {
 
 func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
 	workspace_id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	err = wsc.deleteTasksHandler(workspace_id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return

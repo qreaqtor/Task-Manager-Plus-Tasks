@@ -55,3 +55,15 @@ func (ts *TaskService) DeleteTask(taskId primitive.ObjectID) error {
 	}
 	return nil
 }
+
+func (ts *TaskService) DeleteWorkspaceTasks(workspaceId primitive.ObjectID) error {
+	filter := bson.M{"workspace_id": workspaceId}
+	result, err := ts.tasks.DeleteMany(*ts.ctx, filter)
+	if err != err {
+		return err
+	}
+	if result.DeletedCount == 0 {
+		return errors.New("no matched document found for delete")
+	}
+	return nil
+}

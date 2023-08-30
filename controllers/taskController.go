@@ -68,3 +68,7 @@ func (tc *TaskController) RegisterTasksRoutes(rg *gin.RouterGroup) {
 	rg.GET("/get/:id", tc.getWorkSpaceTasks)
 	rg.DELETE("/delete/:id", tc.deleteUserTask)
 }
+
+func (tc *TaskController) DeleteWorkspaceTasksHandler() func(workspaceId primitive.ObjectID) error {
+	return tc.taskService.DeleteWorkspaceTasks
+}
