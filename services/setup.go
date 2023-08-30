@@ -12,19 +12,13 @@ import (
 )
 
 var (
-	ctx             context.Context
-	tasksCollection *mongo.Collection
-	// API_SECRET          string
-	// TOKEN_HOUR_LIFESPAN int
+	ctx                  context.Context
+	tasksCollection      *mongo.Collection
+	workspacesCollection *mongo.Collection
 )
 
 func init() {
-	//API_SECRET = os.Getenv("API_SECRET")
 	var err error
-	// TOKEN_HOUR_LIFESPAN, err = strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	user, password, dbName := os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"), os.Getenv("DB_NAME")
 	ctx = context.TODO()
 	link := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.5k1ygzv.mongodb.net/", user, password)
@@ -39,4 +33,5 @@ func init() {
 	}
 
 	tasksCollection = mongoclient.Database(dbName).Collection("tasks")
+	workspacesCollection = mongoclient.Database(dbName).Collection("workspaces")
 }

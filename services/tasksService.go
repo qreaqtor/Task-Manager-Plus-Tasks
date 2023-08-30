@@ -27,22 +27,21 @@ func (ts *TaskService) CreateTask(taskIn models.TaskInput) error {
 	return err
 }
 
-func (ts *TaskService) GetUsersTasks(userId primitive.ObjectID) (tasks []models.TaskOutput, err error) {
-	filter := bson.M{"user_id": userId}
+func (ts *TaskService) GetWorkspaceTasks(workspace_Id primitive.ObjectID) (tasks []models.TaskOutput, err error) {
+	filter := bson.M{"workspace_id": workspace_Id}
 	cursor, err := ts.tasks.Find(*ts.ctx, filter)
 	if err != nil {
-		return nil, err
+		return
 	}
-	tasks = make([]models.TaskOutput, 0)
 	for cursor.Next(*ts.ctx) {
 		var taskOut models.TaskOutput
 		err = cursor.Decode(&taskOut)
 		if err != nil {
-			return tasks, err
+			return
 		}
 		tasks = append(tasks, taskOut)
 	}
-	return tasks, nil
+	return
 }
 
 func (ts *TaskService) DeleteTask(taskId primitive.ObjectID) error {

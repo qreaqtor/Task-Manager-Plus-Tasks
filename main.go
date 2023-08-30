@@ -16,5 +16,10 @@ func main() {
 	tc := controllers.NewTaskController()
 	tc.RegisterTasksRoutes(tcPath)
 
+	wscPath := server.Group("workspaces")
+	wscPath.Use(utils.JwtAuthMiddleware())
+	wsc := controllers.NewWorkSpaceController()
+	wsc.RegisterWorkspaceRoutes(wscPath)
+
 	log.Fatal(server.Run(":8081"))
 }
