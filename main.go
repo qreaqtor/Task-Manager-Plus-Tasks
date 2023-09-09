@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"task-manager-plus-tasks/controllers"
-	"task-manager-plus-tasks/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,14 +10,12 @@ import (
 func main() {
 	server := gin.Default()
 
-	tcPath := server.Group("tasks")
-	tcPath.Use(utils.JwtAuthMiddleware())
+	tcPath := server.Group("users/:username/tasks")
 	tc := controllers.NewTaskController()
 	tc.RegisterTasksRoutes(tcPath)
 
-	wscPath := server.Group("workspaces")
-	wscPath.Use(utils.JwtAuthMiddleware())
-	wsc := controllers.NewWorkSpaceController(tc.DeleteWorkspaceTasksHandler())
+	wscPath := server.Group("users/:username/workspaces")
+	wsc := controllers.NewWorkSpaceController(tc.DeleteTasksHandler())
 	wsc.RegisterWorkspaceRoutes(wscPath)
 
 	log.Fatal(server.Run(":8081"))

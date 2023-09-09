@@ -27,8 +27,8 @@ func (wss *WorkspaceService) CreateWorkspace(wsIn *models.WorkspaceInput) error 
 	return err
 }
 
-func (wss *WorkspaceService) GetUserWorkspaces(userId primitive.ObjectID) (wspaces []models.WorkspaceOutput, err error) {
-	filter := bson.M{"users_id": bson.M{"$in": []primitive.ObjectID{userId}}}
+func (wss *WorkspaceService) GetUserWorkspaces(username string) (wspaces []models.WorkspaceOutput, err error) {
+	filter := bson.M{"users": bson.M{"$in": []string{username}}}
 	cursor, err := wss.workspaces.Find(*wss.ctx, filter)
 	if err != nil {
 		return

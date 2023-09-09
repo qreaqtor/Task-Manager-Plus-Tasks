@@ -27,8 +27,8 @@ func (ts *TaskService) CreateTask(taskIn models.TaskInput) error {
 	return err
 }
 
-func (ts *TaskService) GetWorkspaceTasks(workspace_Id primitive.ObjectID) (tasks []models.TaskOutput, err error) {
-	filter := bson.M{"workspace_id": workspace_Id}
+func (ts *TaskService) GetWorkspaceTasks(workspaceId primitive.ObjectID) (tasks []models.TaskOutput, err error) {
+	filter := bson.M{"workspace_id": workspaceId}
 	cursor, err := ts.tasks.Find(*ts.ctx, filter)
 	if err != nil {
 		return

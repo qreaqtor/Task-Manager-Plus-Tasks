@@ -27,8 +27,8 @@ func (wsc *WorkspaceController) createWorkspace(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	userId := ctx.MustGet("userId").(primitive.ObjectID)
-	wsIn.InitWorkSpace(userId)
+	username := ctx.Param("username")
+	wsIn.InitWorkSpace(username)
 	err := wsc.workSpaceService.CreateWorkspace(wsIn)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -38,8 +38,8 @@ func (wsc *WorkspaceController) createWorkspace(ctx *gin.Context) {
 }
 
 func (wsc *WorkspaceController) getUserWorkspaces(ctx *gin.Context) {
-	userId := ctx.MustGet("userId").(primitive.ObjectID)
-	wspaces, err := wsc.workSpaceService.GetUserWorkspaces(userId)
+	username := ctx.Param("username")
+	wspaces, err := wsc.workSpaceService.GetUserWorkspaces(username)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -48,17 +48,17 @@ func (wsc *WorkspaceController) getUserWorkspaces(ctx *gin.Context) {
 }
 
 func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
-	workspace_id, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	err = wsc.deleteTasksHandler(workspace_id)
+	err = wsc.deleteTasksHandler(workspaceId)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	err = wsc.workSpaceService.DeleteWorkspace(workspace_id)
+	err = wsc.workSpaceService.DeleteWorkspace(workspaceId)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
@@ -68,6 +68,6 @@ func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
 
 func (wsc *WorkspaceController) RegisterWorkspaceRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", wsc.createWorkspace)
-	rg.GET("/get/by-user", wsc.getUserWorkspaces)
+	rg.GET("/get/all", wsc.getUserWorkspaces)
 	rg.DELETE("/delete/:id", wsc.deleteWorkspace)
 }
