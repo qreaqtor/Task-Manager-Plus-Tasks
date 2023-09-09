@@ -27,8 +27,7 @@ func (wsc *WorkspaceController) createWorkspace(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	username := ctx.Param("username")
-	wsIn.InitWorkSpace(username)
+	wsIn.InitWorkspace()
 	err := wsc.workSpaceService.CreateWorkspace(wsIn)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -48,7 +47,7 @@ func (wsc *WorkspaceController) getUserWorkspaces(ctx *gin.Context) {
 }
 
 func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
-	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("workspaceId"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -68,6 +67,6 @@ func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
 
 func (wsc *WorkspaceController) RegisterWorkspaceRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", wsc.createWorkspace)
-	rg.GET("/get/all", wsc.getUserWorkspaces)
-	rg.DELETE("/delete/:id", wsc.deleteWorkspace)
+	rg.GET("/get/all/:username", wsc.getUserWorkspaces)
+	rg.DELETE("/delete/:workspaceId", wsc.deleteWorkspace)
 }

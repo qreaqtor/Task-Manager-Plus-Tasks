@@ -25,8 +25,7 @@ func (tc *TaskController) createTask(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	username := ctx.Param("username")
-	taskIn.InitTask(username)
+	taskIn.InitTask()
 	err := tc.taskService.CreateTask(taskIn)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -36,7 +35,7 @@ func (tc *TaskController) createTask(ctx *gin.Context) {
 }
 
 func (tc *TaskController) getWorkspaceTasks(ctx *gin.Context) {
-	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("workspaceId"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -50,7 +49,7 @@ func (tc *TaskController) getWorkspaceTasks(ctx *gin.Context) {
 }
 
 func (tc *TaskController) deleteUserTask(ctx *gin.Context) {
-	taskId, err := primitive.ObjectIDFromHex(ctx.Param("id"))
+	taskId, err := primitive.ObjectIDFromHex(ctx.Param("taskId"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -65,8 +64,8 @@ func (tc *TaskController) deleteUserTask(ctx *gin.Context) {
 
 func (tc *TaskController) RegisterTasksRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", tc.createTask)
-	rg.GET("/get/:id", tc.getWorkspaceTasks)
-	rg.DELETE("/delete/:id", tc.deleteUserTask)
+	rg.GET("/get/:workspaceId", tc.getWorkspaceTasks)
+	rg.DELETE("/delete/:taskId", tc.deleteUserTask)
 }
 
 func (tc *TaskController) DeleteTasksHandler() func(workspaceId primitive.ObjectID) error {

@@ -10,11 +10,11 @@ import (
 func main() {
 	server := gin.Default()
 
-	tcPath := server.Group("users/:username/tasks")
+	tcPath := server.Group("users/tasks")
 	tc := controllers.NewTaskController()
 	tc.RegisterTasksRoutes(tcPath)
 
-	wscPath := server.Group("users/:username/workspaces")
+	wscPath := server.Group("users/workspaces")
 	wsc := controllers.NewWorkSpaceController(tc.DeleteTasksHandler())
 	wsc.RegisterWorkspaceRoutes(wscPath)
 
