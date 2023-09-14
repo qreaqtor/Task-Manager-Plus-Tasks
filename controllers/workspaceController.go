@@ -65,8 +65,44 @@ func (wsc *WorkspaceController) deleteWorkspace(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+func (wsc *WorkspaceController) addUserToWorkspace(ctx *gin.Context) {
+	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("workspaceId"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	var user models.User
+	if err = ctx.ShouldBindJSON(&user); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	err = wsc.workSpaceService.AddUserToWorkspace(workspaceId, user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "success"})
+}
+
+func (wsc *WorkspaceController) deleteUserFromWorkspace(ctx *gin.Context) {
+	workspaceId, err := primitive.ObjectIDFromHex(ctx.Param("workspaceId"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	username := ctx.Param("username")
+	err = wsc.workSpaceService.DeleteUserFromWorkSpace(username, workspaceId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "success"})
+}
+
 func (wsc *WorkspaceController) RegisterWorkspaceRoutes(rg *gin.RouterGroup) {
 	rg.POST("/create", wsc.createWorkspace)
+	rg.PATCH("/add/:workspaceId", wsc.addUserToWorkspace)
+	rg.PATCH("/remove/:username/:workspaceId", wsc.deleteUserFromWorkspace)
 	rg.GET("/get/all/:username", wsc.getUserWorkspaces)
 	rg.DELETE("/delete/:workspaceId", wsc.deleteWorkspace)
 }

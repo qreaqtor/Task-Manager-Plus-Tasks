@@ -40,14 +40,38 @@ func (wss *WorkspaceService) GetUserWorkspaces(username string) (wspaces []model
 	return
 }
 
-func (wss *WorkspaceService) DeleteWorkspace(workspace_id primitive.ObjectID) error {
-	filter := bson.M{"_id": workspace_id}
+func (wss *WorkspaceService) DeleteWorkspace(workspaceId primitive.ObjectID) error {
+	filter := bson.M{"_id": workspaceId}
 	result, err := wss.workspaces.DeleteOne(*wss.ctx, filter)
 	if err != err {
 		return err
 	}
 	if result.DeletedCount != 1 {
 		return errors.New("no matched document found for delete")
+	}
+	return nil
+}
+
+func (wss *WorkspaceService) AddUserToWorkspace(workspaceId primitive.ObjectID, user models.User) error {
+	filter := bson.M{"_id": workspaceId}
+	result, err := wss.workspaces.UpdateOne(*wss.ctx, filter, bson.M{"$addToSet": bson.M{"users": user}})
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("no matched document found for update")
+	}
+	return nil
+}
+
+func (wss *WorkspaceService) DeleteUserFromWorkSpace(username string, workspaceId primitive.ObjectID) error {
+	filter := bson.M{"_id": workspaceId}
+	result, err := wss.workspaces.UpdateOne(*wss.ctx, filter, bson.M{"$pull": bson.M{"users": bson.M{"username": username}}})
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("no matched document found for update")
 	}
 	return nil
 }

@@ -6,12 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type User struct {
-	Username  string `json:"username" bson:"username" binding:"required"`
-	FirstName string `json:"firstName" bson:"firstName" binding:"required"`
-	LastName  string `json:"lastName" bson:"lastName" binding:"required"`
-}
-
 type WorkspaceInput struct {
 	Title       string    `json:"title" bson:"title" binding:"required"`
 	Owner       string    `json:"owner" bson:"owner" binding:"required"`
